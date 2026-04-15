@@ -133,6 +133,7 @@ protected:
     CGUIElement*     m_pTopWindow;
     CGUITabPanel*    m_pPanel;
     CGUIStaticImage* m_pLockedIcon;
+    CGUIStaticImage* m_pFlag;
 
     // Tab controls
     CGUITab* m_pTab[SERVER_BROWSER_TYPE_COUNT];
@@ -182,6 +183,7 @@ protected:
     // Server list columns
     CGUIHandle m_hVersion[SERVER_BROWSER_TYPE_COUNT];
     CGUIHandle m_hLocked[SERVER_BROWSER_TYPE_COUNT];
+    CGUIHandle m_hFlag[SERVER_BROWSER_TYPE_COUNT];
     CGUIHandle m_hName[SERVER_BROWSER_TYPE_COUNT];
     CGUIHandle m_hPing[SERVER_BROWSER_TYPE_COUNT];
     CGUIHandle m_hPlayers[SERVER_BROWSER_TYPE_COUNT];

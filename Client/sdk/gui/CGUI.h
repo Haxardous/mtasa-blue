@@ -43,6 +43,7 @@ class CGUI;
 #define CGUI_ICON_MESSAGEBOX_WARNING  "cgui\\images\\warning.png"
 #define CGUI_ICON_MESSAGEBOX_ERROR    "cgui\\images\\error.png"
 #define CGUI_ICON_SERVER_PASSWORD     "cgui\\images\\locked.png"
+#define CGUI_ICON_SERVER_FLAG         "cgui\\images\\uk.png"
 #define CGUI_GetMaxTextExtent(...)    GetMaxTextExtent(__VA_ARGS__, SString())
 
 #define CHECK_CHANNEL(channel) assert((channel) >= 0 && (channel) < INPUT_CHANNEL_COUNT)

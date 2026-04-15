@@ -91,6 +91,7 @@ CServerBrowser::CServerBrowser()
     m_pTopWindow = nullptr;
     m_pPanel = nullptr;
     m_pLockedIcon = nullptr;
+    m_pFlag = nullptr;
     m_pQuickConnectHelpWindow = nullptr;
     m_pGeneralHelpWindow = nullptr;
 
@@ -139,6 +140,7 @@ CServerBrowser::CServerBrowser()
         m_iSelectedServer[i] = -1;
         m_hVersion[i] = CGUIHandle();
         m_hLocked[i] = CGUIHandle();
+        m_hFlag[i] = CGUIHandle();
         m_hName[i] = CGUIHandle();
         m_hPing[i] = CGUIHandle();
         m_hPlayers[i] = CGUIHandle();
@@ -220,6 +222,15 @@ CServerBrowser::CServerBrowser()
     m_pLockedIcon->SetVisible(false);
     m_pLockedIcon->SetFrameEnabled(false);
     m_pLockedIcon->LoadFromFile("cgui\\images\\serverbrowser\\locked.png");
+
+    // Create flag image
+
+    m_pFlag = reinterpret_cast<CGUIStaticImage*>(pManager->CreateStaticImage());
+    m_pFlag->SetVisible(true);
+    m_pFlag->SetFrameEnabled(false);
+    m_pFlag->LoadFromFile("cgui\\images\\serverbrowser\\uk.png");
+    m_pFlag->SetSize(CVector2D(16, 16));
+
 
     // Create search filter types icon
     m_szSearchTypePath[SearchTypes::SERVERS] = "cgui\\images\\serverbrowser\\search-servers.png";
@@ -425,6 +436,12 @@ CServerBrowser::~CServerBrowser()
         SAFE_DELETE(m_pLockedIcon);
     }
 
+    if (m_pFlag)
+    {
+        m_pFlag->Clear();
+        SAFE_DELETE(m_pFlag);
+    }
+
     for (std::size_t i = 0; i < std::size(m_pSearchIcons); ++i)
     {
         if (m_pSearchIcons[i])
@@ -609,6 +626,7 @@ void CServerBrowser::CreateTab(ServerBrowserType type, const char* szName)
     // Server List Columns
     m_hVersion[type] = m_pServerList[type]->AddColumn("", 0.2f);
     m_hLocked[type] = m_pServerList[type]->AddColumn("", 0.2f);
+    m_hFlag[type] = m_pServerList[type]->AddColumn(_("Flag"), 0.2f);
     m_hName[type] = m_pServerList[type]->AddColumn(_("Name"), 0.2f);
     m_hPlayers[type] = m_pServerList[type]->AddColumn(_("Players"), 0.2f);
     m_hPing[type] = m_pServerList[type]->AddColumn(_("Ping"), 0.2f);
@@ -617,6 +635,7 @@ void CServerBrowser::CreateTab(ServerBrowserType type, const char* szName)
     // NB. SetColumnWidth seems to start from 0
     m_pServerList[type]->SetColumnWidth(m_hVersion[type], 25, false);
     m_pServerList[type]->SetColumnWidth(m_hLocked[type], 16, false);
+    m_pServerList[type]->SetColumnWidth(m_hFlag[type], 18, false);
     m_pServerList[type]->SetColumnWidth(m_hPlayers[type], 70, false);
     m_pServerList[type]->SetColumnWidth(m_hPing[type], 35, false);
 
@@ -1419,6 +1438,10 @@ void CServerBrowser::AddServerToList(CServerListItem* pServer, ServerBrowserType
         // Locked icon
         m_pServerList[Type]->SetItemImage(iIndex, m_hLocked[Type], pServer->bPassworded ? m_pLockedIcon : NULL);
 
+        // Flag image
+
+        m_pServerList[Type]->SetItemImage(iIndex, m_hFlag[Type], m_pFlag);
+
         // Data for later use
         m_pServerList[Type]->SetItemData(iIndex, DATA_PSERVER, (void*)pServer);
 
@@ -1442,6 +1465,7 @@ void CServerBrowser::AddServerToList(CServerListItem* pServer, ServerBrowserType
 
         m_pServerList[Type]->SetItemColor(iIndex, m_hVersion[Type], color.R, color.G, color.B, color.A);
         m_pServerList[Type]->SetItemColor(iIndex, m_hLocked[Type], color.R, color.G, color.B, color.A);
+        m_pServerList[Type]->SetItemColor(iIndex, m_hFlag[Type], color.R, color.G, color.B, color.A);
         m_pServerList[Type]->SetItemColor(iIndex, m_hName[Type], color.R, color.G, color.B, color.A);
         m_pServerList[Type]->SetItemColor(iIndex, m_hPlayers[Type], color.R, color.G, color.B, color.A);
         m_pServerList[Type]->SetItemColor(iIndex, m_hPing[Type], color.R, color.G, color.B, color.A);
@@ -2555,14 +2579,16 @@ void CServerBrowser::BeginServerListRefresh(ServerBrowserType type, bool bClearS
             uiLogicalColumn = 1;
         else if (state.uiSortColumn == m_hLocked[index])
             uiLogicalColumn = 2;
-        else if (state.uiSortColumn == m_hName[index])
+        else if (state.uiSortColumn == m_hFlag[index])
             uiLogicalColumn = 3;
-        else if (state.uiSortColumn == m_hPlayers[index])
+        else if (state.uiSortColumn == m_hName[index])
             uiLogicalColumn = 4;
-        else if (state.uiSortColumn == m_hPing[index])
+        else if (state.uiSortColumn == m_hPlayers[index])
             uiLogicalColumn = 5;
-        else if (state.uiSortColumn == m_hGame[index])
+        else if (state.uiSortColumn == m_hPing[index])
             uiLogicalColumn = 6;
+        else if (state.uiSortColumn == m_hGame[index])
+            uiLogicalColumn = 7;
 
         // Convert SortDirection enum to int (0=None, 1=Ascending, 2=Descending)
         int iDirection = (int)state.sortDirection;
